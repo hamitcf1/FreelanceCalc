@@ -1,0 +1,5 @@
+{
+  "name": "FreelancePayout",
+  "description": "A professional calculator for freelancers to estimate net payouts after platform fees, VAT, and withdrawal charges, with history tracking and CSV export.",
+  "requestFramePermissions": []
+}

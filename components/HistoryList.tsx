@@ -1,88 +1,111 @@
 import React from 'react';
 import { HistoryEntry } from '../types';
 import { formatCurrency } from '../utils/calculator';
-import { Trash2, Download, Table } from 'lucide-react';
+import { Trash2, Download, Table, RotateCcw } from 'lucide-react';
 import { exportHistoryToCSV } from '../utils/csv';
+import Button from './Button';
 
 interface HistoryListProps {
   history: HistoryEntry[];
   onDelete: (id: string) => void;
   onClear: () => void;
+  onRestore: (entry: HistoryEntry) => void;
 }
 
-const HistoryList: React.FC<HistoryListProps> = ({ history, onDelete, onClear }) => {
+const HistoryList: React.FC<HistoryListProps> = ({ history, onDelete, onClear, onRestore }) => {
   if (history.length === 0) {
     return (
-      <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 border-dashed transition-colors">
-        <Table className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
-        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">No History Yet</h3>
-        <p className="text-gray-500 dark:text-gray-400">Save your calculations to see them here.</p>
+      <div className="text-center py-20 glass rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-800 transition-all">
+        <div className="bg-gray-100 dark:bg-gray-800/50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+          <Table className="w-10 h-10 text-gray-300 dark:text-gray-600" />
+        </div>
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Empty Vault</h3>
+        <p className="text-gray-500 dark:text-gray-400 max-w-xs mx-auto text-sm font-medium">Your calculation history is waiting. Save your first entry to see it here.</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-colors">
-      <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-900/50">
-        <h3 className="font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
-            <Table className="w-4 h-4" /> History ({history.length})
+    <div className="glass rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/5">
+      <div className="p-6 border-b border-white/20 dark:border-white/5 flex flex-wrap gap-4 justify-between items-center bg-white/40 dark:bg-gray-900/40">
+        <h3 className="text-lg font-black text-gray-800 dark:text-white flex items-center gap-2">
+          <span className="bg-indigo-500/10 text-indigo-500 p-2 rounded-xl">
+            <Table className="w-5 h-5" />
+          </span>
+          History
+          <span className="ml-1 px-2.5 py-0.5 bg-gray-200 dark:bg-gray-800 rounded-full text-[10px] font-black opacity-50">
+            {history.length}
+          </span>
         </h3>
         <div className="flex gap-2">
-            <button
-                onClick={() => exportHistoryToCSV(history)}
-                className="flex items-center space-x-1 text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-medium px-3 py-1 rounded hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors"
-            >
-                <Download className="w-4 h-4" />
-                <span>Export CSV</span>
-            </button>
-             <button
-                onClick={onClear}
-                className="text-sm text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 px-3 py-1 font-medium hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
-            >
-                Clear All
-            </button>
+          <Button size="sm" variant="secondary" onClick={() => exportHistoryToCSV(history)} icon={Download}>
+            CSV
+          </Button>
+          <Button size="sm" variant="danger" onClick={onClear}>
+            Clear
+          </Button>
         </div>
       </div>
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-900/50">
+        <table className="min-w-full divide-y divide-gray-100 dark:divide-gray-800">
+          <thead className="bg-gray-50/20 dark:bg-gray-900/10">
             <tr>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Gross</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Deductions</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Net</th>
-              <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+              <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Added</th>
+              <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Gross</th>
+              <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Net</th>
+              <th className="px-6 py-4 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
             </tr>
           </thead>
-          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+          <tbody className="divide-y divide-gray-100 dark:divide-gray-800/50">
             {history.map((entry) => {
-               // Fallback to USD if currency wasn't saved in older records
-               const currency = entry.inputs.currency || 'USD';
-               return (
-                  <tr key={entry.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                      {new Date(entry.timestamp).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200 font-medium">
+              const currency = entry.inputs.currency || 'USD';
+              return (
+                <tr key={entry.id} className="group hover:bg-white/40 dark:hover:bg-gray-800/20 transition-all duration-200">
+                  <td className="px-6 py-5 whitespace-nowrap">
+                    <div className="text-sm font-bold text-gray-900 dark:text-white">
+                      {new Date(entry.timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                    </div>
+                    <div className="text-[10px] font-black text-gray-400 uppercase tracking-tighter">
+                      {new Date(entry.timestamp).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                  </td>
+                  <td className="px-6 py-5 whitespace-nowrap">
+                    <div className="text-sm font-bold text-gray-700 dark:text-gray-300">
                       {formatCurrency(entry.gross, currency)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-red-500 dark:text-red-400">
-                      {formatCurrency(entry.totalDeductions, currency)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-emerald-600 dark:text-emerald-400 font-bold">
+                    </div>
+                    <div className="text-[10px] font-black text-rose-500 opacity-60 uppercase">
+                      -{formatCurrency(entry.totalDeductions, currency)}
+                    </div>
+                  </td>
+                  <td className="px-6 py-5 whitespace-nowrap">
+                    <div className="text-base font-black text-emerald-600 dark:text-emerald-400 tabular-nums">
                       {formatCurrency(entry.net, currency)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
+                    </div>
+                  </td>
+                  <td className="px-6 py-5 whitespace-nowrap text-right">
+                    <div className="flex justify-end gap-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-1 group-hover:translate-x-0">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="w-10 h-10 p-0 rounded-xl hover:bg-indigo-500/10 text-indigo-500"
+                        onClick={() => onRestore(entry)}
+                        title="Restore"
+                      >
+                        <RotateCcw className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="w-10 h-10 p-0 rounded-xl hover:bg-rose-500/10 text-rose-500"
                         onClick={() => onDelete(entry.id)}
-                        className="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
-                        title="Delete Entry"
+                        title="Delete"
                       >
                         <Trash2 className="w-4 h-4" />
-                      </button>
-                    </td>
-                  </tr>
-                );
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              );
             })}
           </tbody>
         </table>

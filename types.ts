@@ -30,3 +30,10 @@ export interface HistoryEntry extends CalculationResults {
   timestamp: number;
   inputs: CalculatorInputs;
 }
+
+export interface PlatformPreset {
+  name: string;
+  serviceFeeRate: number;
+  withdrawalFee: number;
+  icon?: string;
+}

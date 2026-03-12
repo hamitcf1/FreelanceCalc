@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { CheckCircle2, XCircle, Info, X } from 'lucide-react';
 
 export type ToastType = 'success' | 'error' | 'info';
@@ -29,10 +29,13 @@ const Toast: React.FC<ToastProps> = ({ toasts, removeToast }) => {
 };
 
 const ToastItem: React.FC<{ toast: ToastMessage; onClose: () => void }> = ({ toast, onClose }) => {
+    const onCloseRef = useRef(onClose);
+    onCloseRef.current = onClose;
+
     useEffect(() => {
-        const timer = setTimeout(onClose, 4000);
+        const timer = setTimeout(() => onCloseRef.current(), 4000);
         return () => clearTimeout(timer);
-    }, [onClose]);
+    }, []);
 
     const icons = {
         success: <CheckCircle2 className="w-5 h-5 text-emerald-500" />,

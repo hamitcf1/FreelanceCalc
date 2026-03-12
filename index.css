@@ -68,11 +68,15 @@ body {
 
 .glass:hover {
     border-color: rgba(255, 255, 255, 0.5);
-    transform: translateY(-2px);
 }
 
 .dark .glass:hover {
     border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Opt-in hover lift effect for cards that should elevate on hover */
+.glass-lift:hover {
+    transform: translateY(-2px);
 }
 
 /* Text Shimmer Effect */

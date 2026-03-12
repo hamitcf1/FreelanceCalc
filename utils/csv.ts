@@ -50,7 +50,7 @@ export const exportHistoryToCSV = (history: HistoryEntry[]) => {
   const csvContent = [headers.join(','), ...rows].join('\n');
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
-  
+
   const link = document.createElement('a');
   link.setAttribute('href', url);
   link.setAttribute('download', `payout_history_${new Date().toISOString().slice(0, 10)}.csv`);
@@ -58,4 +58,5 @@ export const exportHistoryToCSV = (history: HistoryEntry[]) => {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 };

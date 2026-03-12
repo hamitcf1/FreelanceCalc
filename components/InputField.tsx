@@ -111,9 +111,9 @@ const InputField: React.FC<InputFieldProps> = ({
         />
 
         {/* Action Controls */}
-        <div className="flex items-center gap-1.5 pr-4 shrink-0 relative z-20 h-full">
+        <div className="flex items-center gap-2 pr-3 shrink-0 relative z-20 h-full">
           {topExtra && (
-            <div className="mr-1 mt-1">
+            <div className="flex items-center">
               {topExtra}
             </div>
           )}
@@ -129,24 +129,26 @@ const InputField: React.FC<InputFieldProps> = ({
             </button>
           )}
 
-          <div className="flex flex-col border-l border-gray-100 dark:border-gray-700/50 pl-2 ml-1 h-[60%] justify-center">
-            <button
-              type="button"
-              onClick={() => adjustValue(step)}
-              className="p-0.5 rounded-md text-gray-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/40 transition-all"
-              tabIndex={-1}
-            >
-              <ChevronUp className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => adjustValue(-step)}
-              className="p-0.5 rounded-md text-gray-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/40 transition-all"
-              tabIndex={-1}
-            >
-              <ChevronDown className="w-4 h-4" />
-            </button>
-          </div>
+          {type === 'number' && (
+            <div className="flex flex-col border-l border-gray-100 dark:border-gray-700/50 pl-2 h-[60%] justify-center">
+              <button
+                type="button"
+                onClick={() => adjustValue(step)}
+                className="p-0.5 rounded-md text-gray-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/40 transition-all"
+                tabIndex={-1}
+              >
+                <ChevronUp className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => adjustValue(-step)}
+                className="p-0.5 rounded-md text-gray-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/40 transition-all"
+                tabIndex={-1}
+              >
+                <ChevronDown className="w-4 h-4" />
+              </button>
+            </div>
+          )}
 
           {suffix && (
             <div className={`ml-2 transition-all duration-300 text-right ${isFocused ? 'scale-110 text-indigo-500' : 'text-gray-400'}`}>

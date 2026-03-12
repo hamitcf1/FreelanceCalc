@@ -20,7 +20,9 @@ import {
   Zap,
   ExternalLink,
   ChevronRight,
-  Sparkles
+  Sparkles,
+  Plus,
+  Trash2
 } from 'lucide-react';
 
 const CURRENCIES = ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'TRY', 'INR', 'JPY', 'CNY', 'CHF'];
@@ -64,6 +66,7 @@ const App: React.FC = () => {
   const [isClearModalOpen, setIsClearModalOpen] = useState(false);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [hourFormat, setHourFormat] = useLocalStorageState<'decimal' | 'time'>('app_hourFormat', 'decimal');
+  const [customPresets, setCustomPresets] = useLocalStorageState<PlatformPreset[]>('app_customPresets', []);
 
   // --- Derived State (Calculation) ---
   const results: CalculationResults = useMemo(() => {
@@ -119,6 +122,23 @@ const App: React.FC = () => {
       withdrawalFee: preset.withdrawalFee
     }));
     addToast(`${preset.name} preset applied!`, 'info');
+  };
+
+  const saveCustomPreset = () => {
+    const name = prompt('Enter a name for your preset:');
+    if (!name || !name.trim()) return;
+    const newPreset: PlatformPreset = {
+      name: name.trim(),
+      serviceFeeRate: inputs.serviceFeeRate,
+      withdrawalFee: inputs.withdrawalFee,
+    };
+    setCustomPresets(prev => [...prev, newPreset]);
+    addToast(`Preset "${name.trim()}" saved!`, 'success');
+  };
+
+  const deleteCustomPreset = (presetName: string) => {
+    setCustomPresets(prev => prev.filter(p => p.name !== presetName));
+    addToast(`Preset "${presetName}" removed.`, 'info');
   };
 
   const toggleTheme = () => {
@@ -224,7 +244,7 @@ const App: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           <div className="lg:col-span-8 space-y-10">
-            <div className="glass rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden">
+            <div className="glass rounded-[2.5rem] p-8 md:p-12 relative">
               <div className="flex flex-wrap items-center justify-between gap-6 mb-10 border-b border-gray-100 dark:border-white/5 pb-8">
                 <div className="flex items-center space-x-3">
                   <div className="bg-indigo-500/10 p-2 rounded-xl"><Settings2 className="w-5 h-5 text-indigo-500" /></div>
@@ -234,7 +254,7 @@ const App: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 relative z-50">
                   <Select
                     options={CURRENCY_OPTIONS}
                     value={inputs.currency}
@@ -261,6 +281,21 @@ const App: React.FC = () => {
                       <ChevronRight className="w-3 h-3 text-gray-400" />
                     </button>
                   ))}
+                  {customPresets.map((p) => (
+                    <div key={p.name} className="flex items-center gap-0 bg-violet-50/50 dark:bg-violet-900/20 border border-violet-200/50 dark:border-violet-800/30 rounded-2xl overflow-hidden transition-all hover:border-violet-500/50">
+                      <button onClick={() => applyPreset(p)} className="px-4 py-3 flex items-center gap-2">
+                        <span className="text-sm font-bold text-violet-700 dark:text-violet-300">{p.name}</span>
+                        <ChevronRight className="w-3 h-3 text-violet-400" />
+                      </button>
+                      <button onClick={() => deleteCustomPreset(p.name)} className="px-2 py-3 text-violet-400 hover:text-rose-500 transition-colors border-l border-violet-200/50 dark:border-violet-700/30">
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                  <button onClick={saveCustomPreset} className="bg-white/50 dark:bg-gray-800/30 border border-dashed border-gray-300 dark:border-gray-700 hover:border-indigo-500/50 hover:bg-white dark:hover:bg-gray-800 px-4 py-3 rounded-2xl flex items-center gap-2 transition-all">
+                    <Plus className="w-3.5 h-3.5 text-gray-400" />
+                    <span className="text-sm font-bold text-gray-400">Save Current</span>
+                  </button>
                 </div>
               </div>
 
@@ -307,6 +342,7 @@ const App: React.FC = () => {
           <div className="lg:col-span-4 lg:sticky lg:top-8">
             <SummaryCard
               results={results}
+              inputs={inputs}
               onSave={handleSave}
               canSave={results.gross > 0}
               currency={inputs.currency}

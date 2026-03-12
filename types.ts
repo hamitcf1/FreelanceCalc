@@ -20,6 +20,7 @@ export interface CalculationResults {
   totalDeductions: number;
   net: number;
   netInLocalCurrency: number;
+  effectiveHourlyRate: number;
   // Optional fields for target mode results
   hoursRequired?: number;
   hoursPerDay?: number;

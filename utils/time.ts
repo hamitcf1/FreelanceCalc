@@ -5,9 +5,10 @@
  */
 export const decimalToTime = (decimalHours: number): string => {
     const absoluteHours = Math.abs(decimalHours);
-    const h = Math.floor(absoluteHours);
-    const m = Math.floor((absoluteHours * 60) % 60);
-    const s = Math.round((absoluteHours * 3600) % 60);
+    const totalSeconds = Math.round(absoluteHours * 3600);
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
 
     const pad = (num: number) => num.toString().padStart(2, '0');
 
